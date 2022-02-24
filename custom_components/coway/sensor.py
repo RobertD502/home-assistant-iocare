@@ -79,7 +79,7 @@ class AirQualityIndex(SensorEntity):
 
     @property
     def unit_of_measurement(self):
-        return "AQI"
+        return "aqi"
 
     @property
     def icon(self):
