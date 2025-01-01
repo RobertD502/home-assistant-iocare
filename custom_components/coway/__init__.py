@@ -10,6 +10,7 @@ from .const import (
     DOMAIN,
     LOGGER,
     PLATFORMS,
+    POLLING_INTERVAL,
     SKIP_PASSWORD_CHANGE,
     UPDATE_LISTENER,
 )
@@ -53,25 +54,43 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         password = entry.data[CONF_PASSWORD]
 
         LOGGER.debug(f'Migrating Coway config entry unique id to {username}')
-        entry.version = 3
 
         hass.config_entries.async_update_entry(
             entry,
+            version=4,
             data={
                 CONF_USERNAME: username,
                 CONF_PASSWORD: password,
             },
-            options={SKIP_PASSWORD_CHANGE: False},
+            options={
+                SKIP_PASSWORD_CHANGE: False,
+                POLLING_INTERVAL: 120
+            },
             unique_id=username,
         )
     if entry.version == 2:
-        LOGGER.debug('Migrating Coway config and disabling skipping password change.')
-        entry.version = 3
+        LOGGER.debug('Migrating Coway config: disabling skipping password change and setting polling interval of 120.')
 
         hass.config_entries.async_update_entry(
             entry,
-            options={SKIP_PASSWORD_CHANGE: False},
+            version=4,
+            options={
+                SKIP_PASSWORD_CHANGE: False,
+                POLLING_INTERVAL: 120
+            },
         )
+    if entry.version == 3:
+        LOGGER.debug('Migrating Coway config and setting polling interval to 120 seconds.')
+
+        hass.config_entries.async_update_entry(
+            entry,
+            version=4,
+            options={
+                SKIP_PASSWORD_CHANGE: entry.options[SKIP_PASSWORD_CHANGE],
+                POLLING_INTERVAL: 120
+            },
+        )
+        
     return True
 
 async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:

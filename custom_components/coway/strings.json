@@ -34,7 +34,8 @@
       "coway_account_settings": {
         "description": "Options for Coway IoCare Account",  
         "data": {
-          "skip_password_change": "Skip password change"
+          "skip_password_change": "Skip password change",
+          "polling_interval": "Polling interval (seconds)"
         }
       }
     }
