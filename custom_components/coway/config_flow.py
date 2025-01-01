@@ -14,7 +14,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 import homeassistant.helpers.config_validation as cv
 
-from .const import DEFAULT_NAME, DOMAIN, SKIP_PASSWORD_CHANGE
+from .const import DEFAULT_NAME, DOMAIN, POLLING_INTERVAL, SKIP_PASSWORD_CHANGE
 from .util import async_validate_api, NoPurifiersError
 
 
@@ -30,7 +30,7 @@ DATA_SCHEMA = vol.Schema(
 class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Coway integration."""
 
-    VERSION = 3
+    VERSION = 4
 
     entry: config_entries.ConfigEntry | None
 
@@ -40,7 +40,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry,
     ) -> CowayOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return CowayOptionsFlowHandler(config_entry)
+        return CowayOptionsFlowHandler()
 
     async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> FlowResult:
         """Handle re-authentication with Coway."""
@@ -80,7 +80,10 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
                     },
-                    options={SKIP_PASSWORD_CHANGE: skip_password_change},
+                    options={
+                        SKIP_PASSWORD_CHANGE: skip_password_change,
+                        POLLING_INTERVAL: self.entry.options[POLLING_INTERVAL],
+                    },
                 )
                 await self.hass.config_entries.async_reload(self.entry.entry_id)
                 return self.async_abort(reason="reauth_successful")
@@ -123,7 +126,10 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
                     },
-                    options={SKIP_PASSWORD_CHANGE: skip_password_change},
+                    options={
+                        SKIP_PASSWORD_CHANGE: skip_password_change,
+                        POLLING_INTERVAL: 120,
+                    },
                 )
 
         return self.async_show_form(
@@ -135,10 +141,6 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class CowayOptionsFlowHandler(config_entries.OptionsFlow):
     """ Handle Coway account options. """
-
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
         """ Manage options. """
@@ -156,6 +158,12 @@ class CowayOptionsFlowHandler(config_entries.OptionsFlow):
                     SKIP_PASSWORD_CHANGE, False
                 ),
             ): bool,
+            vol.Required(
+                POLLING_INTERVAL,
+                default=self.config_entry.options.get(
+                    POLLING_INTERVAL, 120
+                ),
+            ): int,
         }
 
         return self.async_show_form(step_id="coway_account_settings", data_schema=vol.Schema(options))
