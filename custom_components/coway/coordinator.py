@@ -15,7 +15,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, LOGGER, SKIP_PASSWORD_CHANGE, TIMEOUT
+from .const import DOMAIN, LOGGER, POLLING_INTERVAL, SKIP_PASSWORD_CHANGE, TIMEOUT
 
 
 class CowayDataUpdateCoordinator(DataUpdateCoordinator):
@@ -37,7 +37,7 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
             hass,
             LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
+            update_interval=timedelta(seconds=entry.options[POLLING_INTERVAL]),
         )
 
     async def _async_update_data(self) -> PurifierData:
