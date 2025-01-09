@@ -34,7 +34,7 @@ async def async_setup_entry(
     sensors = []
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
-            if not purifier_data.mcu_version:
+            if purifier_data.air_quality_index:
                 sensors.append(AirQualityIndex(coordinator, purifier_id))
 
             sensors.extend((
