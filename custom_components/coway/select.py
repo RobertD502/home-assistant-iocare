@@ -48,7 +48,7 @@ async def async_setup_entry(
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
             product_name = purifier_data.device_attr['product_name']
             #250S purifier has multiple light modes
-            if product_name in ['COLUMBIA', 'COLUMBIA_EU']:
+            if product_name in ['COLUMBIA', 'COLUMBIA EU']:
                 selects.append(Light(coordinator, purifier_id))
             selects.extend((
                 Timer(coordinator, purifier_id),
@@ -145,7 +145,7 @@ class Timer(CoordinatorEntity, SelectEntity):
             raise HomeAssistantError(f'Setting a timer for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()
 
 
@@ -238,7 +238,7 @@ class PreFilterFrequency(CoordinatorEntity, SelectEntity):
             raise HomeAssistantError(f'Setting a pre-filter wash frequency for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()
 
 
@@ -331,7 +331,7 @@ class SmartModeSensitivity(CoordinatorEntity, SelectEntity):
             raise HomeAssistantError(f'Setting smart mode sensitivity for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()
 
 
@@ -389,7 +389,7 @@ class Light(CoordinatorEntity, SelectEntity):
     def current_option(self) -> str:
         """Returns current light mode."""
 
-        return IOCARE_LIGHT_MODES_TO_HASS.get(self.purifier_data.light_mode)
+        return IOCARE_LIGHT_MODES_TO_HASS.get(str(self.purifier_data.light_mode))
 
     @property
     def options(self) -> list:
@@ -415,10 +415,10 @@ class Light(CoordinatorEntity, SelectEntity):
                 await self.coordinator.client.async_set_light_mode(self.purifier_data.device_attr, mode)
             except CowayError as ex:
                 raise HomeAssistantError(ex)
-            self.purifier_data.light_mode = mode
+            self.purifier_data.light_mode = int(mode)
         else:
             raise HomeAssistantError(f'Setting light mode for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()
