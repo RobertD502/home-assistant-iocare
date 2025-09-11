@@ -37,16 +37,16 @@ COWAY_ERRORS = (
 )
 
 IAQ_NAMED = {
-    "1": "Good",
-    "2": "Moderate",
-    "3": "Unhealthy",
-    "4": "Very Unhealthy"
+    1: "Good",
+    2: "Moderate",
+    3: "Unhealthy",
+    4: "Very Unhealthy"
 }
 
-IOCARE_FAN_OFF = "0"
-IOCARE_FAN_LOW = "1"
-IOCARE_FAN_MEDIUM = "2"
-IOCARE_FAN_HIGH = "3"
+IOCARE_FAN_OFF = 0
+IOCARE_FAN_LOW = 1
+IOCARE_FAN_MEDIUM = 2
+IOCARE_FAN_HIGH = 3
 
 IOCARE_TIMER_OFF = "0"
 IOCARE_TIMER_1H = "60"
