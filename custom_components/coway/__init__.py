@@ -4,7 +4,6 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import issue_registry as ir
 
 from .const import (
     COWAY_COORDINATOR,
@@ -20,16 +19,6 @@ from .coordinator import CowayDataUpdateCoordinator
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Coway from a config entry."""
-
-    # Create deprecation notification - REMOVE once API changes have been made
-    ir.async_create_issue(
-        hass,
-        DOMAIN,
-        "coway_api_deprecation",
-        is_fixable=False,
-        severity=ir.IssueSeverity.WARNING,
-        translation_key="coway_api_deprecation",
-    )
 
     coordinator = CowayDataUpdateCoordinator(hass, entry)
     await coordinator.async_config_entry_first_refresh()
