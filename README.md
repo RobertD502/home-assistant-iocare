@@ -10,9 +10,9 @@
 
 ***All proceeds go towards helping a local animal rescue.**
 
-## ⚠️ IMPORTANT NOTICE - IoCare App API Deprecation
+## ⚠️ IMPORTANT NOTICE
 
-**Coway is shutting down the API used by their old IoCare app on September 1st, 2025 and is switching over to their new app, IoCare+. IoCare+ uses a completely new API - I am currently in the process of reverse engineering it and will have to rewrite the integration to account for the changes. In addition, since June 30th, Coway has turned off the ability to register purifiers in the old IoCare app. For those who have not set up their purifier(s) in the app before said date or have removed their purifier(s) from the old app since, you will not be able to use this integration until it has been updated to use the API of the IoCare+ app. For more information regarding Coway's deprecation of the old API/app and about the IoCare+ app, please visit [IoCare+ Transition Info](https://iocare.coway.com/notice/20250626/notice_250626.html)**.
+**Use of this integration requires that purifiers have been registered with the IoCare+ app**
 
 
 ## Confirmed Working Models
