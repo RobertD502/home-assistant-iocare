@@ -39,11 +39,5 @@
         }
       }
     }
-  },
-  "issues": {
-    "coway_api_deprecation": {
-      "title": "Coway API Deprecation",
-      "description": "The API used by the Coway IoCare app, as well as this integration, will be shut down on September 1st, 2025. Coway is switching over to their new IoCare+ app. As a result, I have to reverse engineer the new API and rewrite the integration. While you can register your purifier(s) in the new app, please don't remove it/them from the old IoCare app - doing so, before I have incorporated the new API into this integration, will result in the inability of the integration to find any purifiers. For more info about Coway's API deprecation visit https://iocare.coway.com/notice/20250626/notice_250626.html"
-    }
   }
 }

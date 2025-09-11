@@ -29,7 +29,7 @@ async def async_setup_entry(
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
         product_name = purifier_data.device_attr['product_name']
-        if product_name not in ['COLUMBIA', 'COLUMBIA_EU']:
+        if product_name not in ['COLUMBIA', 'COLUMBIA EU']:
             switches.extend((
                 PurifierLight(coordinator, purifier_id),
             ))
@@ -107,7 +107,7 @@ class PurifierLight(CoordinatorEntity, SwitchEntity):
             raise HomeAssistantError(f'{self.purifier_data.device_attr["name"]} light can only be controlled when the purifier is On.')
 
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
@@ -123,7 +123,7 @@ class PurifierLight(CoordinatorEntity, SwitchEntity):
             raise HomeAssistantError(f'{self.purifier_data.device_attr["name"]} light can only be controlled when the purifier is On.')
 
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()
 
     @property

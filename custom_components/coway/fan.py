@@ -59,10 +59,6 @@ async def async_setup_entry(
 class Purifier(CoordinatorEntity, FanEntity):
     """Representation of a Coway Airmega air purifier."""
 
-    # Need to remove this in 2025.2 once setting it manually
-    # isn't required anymore.
-    _enable_turn_on_off_backwards_compatibility = False
-
     def __init__(self, coordinator, purifier_id):
         super().__init__(coordinator)
         self.purifier_id = purifier_id
@@ -112,10 +108,10 @@ class Purifier(CoordinatorEntity, FanEntity):
     def preset_modes(self) -> list:
         """Return the available preset modes."""
 
-        if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+        if self.purifier_data.device_attr['model_code'] == "AP-1512HHS":
             return PRESET_MODES_AP
-        elif self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA_EU']:
-            if self.purifier_data.fan_speed == '9':
+        elif self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA EU']:
+            if self.purifier_data.fan_speed == 9:
                 return PRESET_MODES_250_WITH_ECO
             else:
                 return PRESET_MODES_250
@@ -129,15 +125,15 @@ class Purifier(CoordinatorEntity, FanEntity):
     def preset_mode(self) -> str:
         """Return the current preset mode."""
 
-        if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+        if self.purifier_data.device_attr['model_code'] == "AP-1512HHS":
             if self.purifier_data.auto_mode:
                 return PRESET_MODE_AUTO
             if self.purifier_data.eco_mode:
                 return PRESET_MODE_ECO
-        elif self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA_EU']:
+        elif self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA EU']:
             # Fan speed of 9 is seen when in Auto Eco mode
             # for 250S purifiers
-            if self.purifier_data.fan_speed == '9':
+            if self.purifier_data.fan_speed == 9:
                 return PRESET_MODE_AUTO_ECO
             if self.purifier_data.auto_mode:
                 return PRESET_MODE_AUTO
@@ -164,8 +160,8 @@ class Purifier(CoordinatorEntity, FanEntity):
         ## Neither of these speeds is a valid user-selectable speed so, in HA, we need to artifically
         ## show the speed as being 0, which is in line with the IoCare app showing no speed selected
         ## when in either of these two modes.
-        if self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA_EU']:
-            if self.purifier_data.fan_speed in ['5', '9']:
+        if self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA EU']:
+            if self.purifier_data.fan_speed in [5, 9]:
                 return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
         if self.preset_mode == PRESET_MODE_AUTO_ECO:
             return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
@@ -209,7 +205,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             try:
                 await self.coordinator.client.async_set_power(self.purifier_data.device_attr, True)
                 await asyncio.sleep(2)
-                await self.coordinator.client.async_set_fan_speed(self.purifier_data.device_attr, speed)
+                await self.coordinator.client.async_set_fan_speed(self.purifier_data.device_attr, str(speed))
             except CowayError as ex:
                 raise HomeAssistantError(ex)
             self.purifier_data.is_on = True
@@ -218,7 +214,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.night_mode = False
             self.purifier_data.fan_speed = speed
             self.async_write_ha_state()
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(3)
             await self.coordinator.async_request_refresh()
         else:
             try:
@@ -228,7 +224,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.is_on = True
             self.purifier_data.light_on = True
             self.async_write_ha_state()
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(3)
             await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
@@ -241,7 +237,7 @@ class Purifier(CoordinatorEntity, FanEntity):
         self.purifier_data.is_on = False
         self.purifier_data.light_on = False
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()
 
     async def async_set_percentage(self, percentage: int) -> None:
@@ -255,14 +251,14 @@ class Purifier(CoordinatorEntity, FanEntity):
             else:
                 speed = HASS_FAN_SPEED_TO_IOCARE.get(percentage)
                 try:
-                    await self.coordinator.client.async_set_fan_speed(self.purifier_data.device_attr, speed)
+                    await self.coordinator.client.async_set_fan_speed(self.purifier_data.device_attr, str(speed))
                 except CowayError as ex:
                     raise HomeAssistantError(ex)
                 self.purifier_data.fan_speed = speed
                 self.purifier_data.auto_mode = False
                 self.purifier_data.night_mode = False
                 self.async_write_ha_state()
-                await asyncio.sleep(1.5)
+                await asyncio.sleep(3)
                 await self.coordinator.async_request_refresh()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
@@ -279,7 +275,7 @@ class Purifier(CoordinatorEntity, FanEntity):
                 raise HomeAssistantError(ex)
             self.purifier_data.is_on = True
             self.purifier_data.light_on = True
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
         if preset_mode == PRESET_MODE_AUTO:
             try:
                 await self.coordinator.client.async_set_auto_mode(self.purifier_data.device_attr)
@@ -291,7 +287,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.night_mode = False
             self.purifier_data.fan_speed = IOCARE_FAN_LOW
         if preset_mode in [PRESET_MODE_NIGHT, PRESET_MODE_ECO]:
-            if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+            if self.purifier_data.device_attr['model_code'] == "AP-1512HHS":
                 try:
                     await self.coordinator.client.async_set_eco_mode(self.purifier_data.device_attr)
                 except CowayError as ex:
@@ -317,5 +313,5 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.fan_speed = IOCARE_FAN_OFF
 
         self.async_write_ha_state()
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(3)
         await self.coordinator.async_request_refresh()

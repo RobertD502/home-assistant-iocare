@@ -25,6 +25,7 @@ async def async_validate_api(hass: HomeAssistant, username: str, password: str, 
 
     try:
         async with async_timeout.timeout(TIMEOUT):
+            await client.login()
             coway_query = await client.async_get_purifiers()
     except AuthError as err:
         LOGGER.error(f'Could not authenticate on Coway servers: {err}')
@@ -35,7 +36,7 @@ async def async_validate_api(hass: HomeAssistant, username: str, password: str, 
     except COWAY_ERRORS as err:
         LOGGER.error(f'Failed to get information from Coway servers: {err}')
         raise ConnectionError from err
-    purifiers: list = coway_query['data']['deviceInfos']
+    purifiers: list = coway_query
     if not purifiers:
         LOGGER.error("Could not retrieve any purifiers from Coway servers")
         raise NoPurifiersError
