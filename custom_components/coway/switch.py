@@ -83,7 +83,12 @@ class PurifierLight(CoordinatorEntity, SwitchEntity):
     def icon(self) -> str:
         """Set purifier switch icon to lightbulb."""
 
-        return 'mdi:lightbulb'
+        if self.is_on:
+            return 'mdi:led-on'
+        elif self.purifier_data.is_on:
+            return 'mdi:led-off'
+        else:
+            return 'mdi:led-variant-off'
 
     @property
     def is_on(self) -> bool:
