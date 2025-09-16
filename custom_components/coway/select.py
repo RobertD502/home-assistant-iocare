@@ -46,13 +46,15 @@ async def async_setup_entry(
     selects = []
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
-            product_name = purifier_data.device_attr['product_name']
-            #250S purifier has multiple light modes
-            if product_name in ['COLUMBIA', 'COLUMBIA EU']:
+            model = purifier_data.device_attr['model']
+            # 250S/IconS purifiers have multiple light modes
+            if model in ['Airmega 250S', 'Airmega IconS']:
                 selects.append(Light(coordinator, purifier_id))
+            # Filter endpoint is currently under development by Coway for 250S
+            if purifier_data.pre_filter_change_frequency is not None:
+                selects.append(PreFilterFrequency(coordinator, purifier_id))
             selects.extend((
                 Timer(coordinator, purifier_id),
-                PreFilterFrequency(coordinator, purifier_id),
                 SmartModeSensitivity(coordinator, purifier_id),
             ))
 
@@ -136,13 +138,19 @@ class Timer(CoordinatorEntity, SelectEntity):
         if self.purifier_data.is_on:
             time = HASS_TIMER_TO_IOCARE.get(option)
             try:
-                await self.coordinator.client.async_set_timer(self.purifier_data.device_attr, time)
+                await self.coordinator.client.async_set_timer(
+                    self.purifier_data.device_attr,
+                    time
+                )
             except CowayError as ex:
                 raise HomeAssistantError(ex)
             self.purifier_data.timer = time
             self.purifier_data.timer_remaining = time
         else:
-            raise HomeAssistantError(f'Setting a timer for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
+            raise HomeAssistantError(
+                f'Setting a timer for {self.purifier_data.device_attr["name"]} '
+                f'can only be done when the purifier is On.'
+            )
 
         self.async_write_ha_state()
         await asyncio.sleep(3)
@@ -230,12 +238,18 @@ class PreFilterFrequency(CoordinatorEntity, SelectEntity):
         if self.purifier_data.is_on:
             wash_frequency = HASS_PRE_FILTER_TO_IOCARE.get(option)
             try:
-                await self.coordinator.client.async_change_prefilter_setting(self.purifier_data.device_attr, wash_frequency)
+                await self.coordinator.client.async_change_prefilter_setting(
+                    self.purifier_data.device_attr,
+                    wash_frequency
+                )
             except CowayError as ex:
                 raise HomeAssistantError(ex)
             self.purifier_data.pre_filter_change_frequency = wash_frequency
         else:
-            raise HomeAssistantError(f'Setting a pre-filter wash frequency for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
+            raise HomeAssistantError(
+                f'Setting a pre-filter wash frequency for {self.purifier_data.device_attr["name"]} '
+                f'can only be done when the purifier is On.'
+            )
 
         self.async_write_ha_state()
         await asyncio.sleep(3)
@@ -323,12 +337,18 @@ class SmartModeSensitivity(CoordinatorEntity, SelectEntity):
         if self.purifier_data.is_on:
             sensitivity = HASS_SMART_SENSITIVITY_TO_IOCARE.get(option)
             try:
-                await self.coordinator.client.async_set_smart_mode_sensitivity(self.purifier_data.device_attr, str(sensitivity))
+                await self.coordinator.client.async_set_smart_mode_sensitivity(
+                    self.purifier_data.device_attr,
+                    str(sensitivity)
+                )
             except CowayError as ex:
                 raise HomeAssistantError(ex)
             self.purifier_data.smart_mode_sensitivity = sensitivity
         else:
-            raise HomeAssistantError(f'Setting smart mode sensitivity for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
+            raise HomeAssistantError(
+                f'Setting smart mode sensitivity for {self.purifier_data.device_attr["name"]} '
+                f'can only be done when the purifier is On.'
+            )
 
         self.async_write_ha_state()
         await asyncio.sleep(3)
@@ -337,7 +357,7 @@ class SmartModeSensitivity(CoordinatorEntity, SelectEntity):
 
 class Light(CoordinatorEntity, SelectEntity):
     """Representation of selecting light mode. Currently only used
-       by 250S purifiers.
+       by 250S/IconS purifiers.
     """
 
     def __init__(self, coordinator, purifier_id):
@@ -395,7 +415,10 @@ class Light(CoordinatorEntity, SelectEntity):
     def options(self) -> list:
         """Return list of all the available light modes."""
 
-        return IOCARE_LIGHT_MODES
+        if self.purifier_data.device_attr['model'] == 'Airmega 250S':
+            return IOCARE_LIGHT_MODES
+        else:
+            return IOCARE_LIGHT_MODES_EXTENDED
 
     @property
     def available(self) -> bool:
@@ -412,12 +435,18 @@ class Light(CoordinatorEntity, SelectEntity):
         if self.purifier_data.is_on:
             mode = HASS_LIGHT_MODE_TO_IOCARE.get(option)
             try:
-                await self.coordinator.client.async_set_light_mode(self.purifier_data.device_attr, mode)
+                await self.coordinator.client.async_set_light_mode(
+                    self.purifier_data.device_attr,
+                    mode
+                )
             except CowayError as ex:
                 raise HomeAssistantError(ex)
             self.purifier_data.light_mode = int(mode)
         else:
-            raise HomeAssistantError(f'Setting light mode for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
+            raise HomeAssistantError(
+                f'Setting light mode for {self.purifier_data.device_attr["name"]} '
+                f'can only be done when the purifier is On.'
+            )
 
         self.async_write_ha_state()
         await asyncio.sleep(3)
