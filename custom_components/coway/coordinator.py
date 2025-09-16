@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 import json
 
 from cowayaio import CowayClient
-from cowayaio.exceptions import AuthError, CowayError, PasswordExpired
+from cowayaio.exceptions import AuthError, CowayError, PasswordExpired, ServerMaintenance
 from cowayaio.purifier_model import PurifierData
 
 from homeassistant.config_entries import ConfigEntry
@@ -52,7 +52,7 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
                 if start_time and end_time:
                     current_dt = datetime.now(timezone.utc)
                     if start_time.astimezone(timezone.utc) <= current_dt <= end_time.astimezone(timezone.utc):
-                        raise UpdateFailed(
+                        raise ServerMaintenance(
                             f'Coway servers are currently undergoing planned maintenance. '
                             f'Polling will resume once the maintenance period is over.{nl}'
                             f'Maintenance Start Time: {as_local(start_time).strftime("%m/%d/%Y, %H:%M")}{nl}'
@@ -64,6 +64,8 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
                 else:
                     data = await self.client.async_get_purifiers_data()
             data = await self.client.async_get_purifiers_data()
+        except ServerMaintenance as error:
+            raise UpdateFailed(error) from error
         except AuthError as error:
             raise ConfigEntryAuthFailed from error
         except PasswordExpired as error:
