@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from cowayaio.exceptions import AuthError, PasswordExpired
+from cowayaio.exceptions import AuthError, PasswordExpired, ServerMaintenance
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -70,6 +70,8 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "no_purifiers"
             except PasswordExpired:
                 errors["base"] = "password_expired"
+            except ServerMaintenance:
+                errors["base"] = "server_maintenance"
             else:
                 assert self.entry is not None
 
@@ -116,6 +118,8 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "no_purifiers"
             except PasswordExpired:
                 errors["base"] = "password_expired"
+            except ServerMaintenance:
+                errors["base"] = "server_maintenance"
             else:
                 await self.async_set_unique_id(username)
                 self._abort_if_unique_id_configured()
