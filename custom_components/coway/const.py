@@ -99,8 +99,10 @@ IOCARE_FAN_SPEED_TO_HASS = {
 }
 
 IOCARE_LIGHT_MODES = ["On", "Off", "AQI Off"]
+IOCARE_LIGHT_MODES_EXTENDED = ["On", "Off", "AQI Off", "Half Off"]
 IOCARE_LIGHT_MODES_TO_HASS = {
     LightMode.ON: "On",
     LightMode.AQI_OFF: "AQI Off",
-    LightMode.OFF: "Off"
+    LightMode.OFF: "Off",
+    LightMode.HALF_OFF: "Half Off"
 }
