@@ -32,7 +32,7 @@ async def async_setup_entry(
         if model not in ['Airmega 250S', 'Airmega IconS']:
             switches.append(PurifierLight(coordinator, purifier_id))
         if model == 'Airmega 250S':
-            switches.append(ButtonLock(coordinator, purifier_id)
+            switches.append(ButtonLock(coordinator, purifier_id))
 
     async_add_entities(switches)
 
