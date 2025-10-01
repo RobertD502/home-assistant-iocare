@@ -5,7 +5,7 @@ import async_timeout
 
 from aiohttp import ClientSession
 from cowayaio import CowayClient
-from cowayaio.exceptions import AuthError, CowayError, PasswordExpired, ServerMaintenance
+from cowayaio.exceptions import AuthError, CowayError, PasswordExpired, ServerMaintenance, RateLimited
 
 from homeassistant.core import HomeAssistant
 
@@ -29,6 +29,8 @@ async def async_validate_api(hass: HomeAssistant, username: str, password: str, 
             coway_query = await client.async_get_purifiers()
     except ServerMaintenance as err:
         raise ServerMaintenance from err
+    except RateLimited as err:
+        raise RateLimited from err
     except AuthError as err:
         LOGGER.error(f'Could not authenticate on Coway servers: {err}')
         raise AuthError from err
@@ -50,3 +52,6 @@ async def async_validate_api(hass: HomeAssistant, username: str, password: str, 
 
 class NoPurifiersError(Exception):
     """No Purifiers from Coway API."""
+
+class KnownServerMaintenance(Exception):
+    """Known server maintenance encountered."""

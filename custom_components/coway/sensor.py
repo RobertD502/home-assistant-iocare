@@ -169,7 +169,11 @@ class PreFilter(CoordinatorEntity, SensorEntity):
     def name(self) -> str:
         """Return name of the entity."""
 
-        return "Pre filter"
+        # AP-1512HHS models in UK (02FMG), Europe (02FMF, 02FWN)
+        if self.purifier_data.device_attr['code'] in ['02FMG', '02FMF', '02FWN']:
+            return "Charcoal filter"
+        else:
+            return "Pre filter"
 
     @property
     def has_entity_name(self) -> bool:
@@ -181,7 +185,11 @@ class PreFilter(CoordinatorEntity, SensorEntity):
     def native_value(self) -> int:
         """Return current pre-filter percentage."""
 
-        return self.purifier_data.pre_filter_pct
+        # AP-1512HHS models in UK (02FMG), Europe (02FMF, 02FWN)
+        if self.purifier_data.device_attr['code'] in ['02FMG', '02FMF', '02FWN']:
+            return self.purifier_data.odor_filter_pct
+        else:
+            return self.purifier_data.pre_filter_pct
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -245,7 +253,11 @@ class MAX2Filter(CoordinatorEntity, SensorEntity):
     def name(self) -> str:
         """Return name of the entity."""
 
-        return "MAX2 filter"
+        # AP-1512HHS models in UK (02FMG), Europe (02FMF, 02FWN)
+        if self.purifier_data.device_attr['code'] in ['02FMG', '02FMF', '02FWN']:
+            return "HEPA filter"
+        else:
+            return "MAX2 filter"
 
     @property
     def has_entity_name(self) -> bool:
@@ -255,7 +267,7 @@ class MAX2Filter(CoordinatorEntity, SensorEntity):
 
     @property
     def native_value(self) -> int:
-        """Return current MAX2 filter percentage."""
+        """Return current MAX2/HEPA filter percentage."""
 
         return self.purifier_data.max2_pct
 
@@ -630,7 +642,12 @@ class Lux(CoordinatorEntity, SensorEntity):
     def native_value(self) -> int:
         """Return current Lux measurement."""
 
-        return self.purifier_data.lux_sensor
+        if self.purifier_data.device_attr['model'] == 'Airmega 400S':
+            return self.purifier_data.lux_sensor
+        else:
+            # For 250S, 1022 is the value obtained while testing
+            # in a dark environment
+            return max(1022 - self.purifier_data.lux_sensor, 0)
 
     @property
     def native_unit_of_measurement(self) -> str:

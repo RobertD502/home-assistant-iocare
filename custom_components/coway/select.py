@@ -53,7 +53,9 @@ async def async_setup_entry(
                 selects.append(Light(coordinator, purifier_id))
             # Filter endpoint is currently under development by Coway for 250S
             if purifier_data.pre_filter_change_frequency is not None:
-                selects.append(PreFilterFrequency(coordinator, purifier_id))
+                # UK (02FMG), Europe (02FMF, 02FWN) AP-1512HHS models don't have pre-filter
+                if purifier_data.device_attr['code'] not in ['02FMG','02FMF', '02FWN']:
+                    selects.append(PreFilterFrequency(coordinator, purifier_id))
             selects.extend((
                 Timer(coordinator, purifier_id),
                 SmartModeSensitivity(coordinator, purifier_id),
