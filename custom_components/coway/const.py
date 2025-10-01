@@ -21,6 +21,7 @@ COWAY_COORDINATOR = "coway_coordinator"
 POLLING_INTERVAL = "polling_interval"
 SKIP_PASSWORD_CHANGE = "skip_password_change"
 UPDATE_LISTENER = "update_listener"
+MAINTENANCE_COOLDOWN = "maintenance_cooldown"
 
 PLATFORMS = [
     Platform.FAN,
