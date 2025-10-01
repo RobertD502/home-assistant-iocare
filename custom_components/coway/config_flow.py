@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from cowayaio.exceptions import AuthError, PasswordExpired, ServerMaintenance
+from cowayaio.exceptions import AuthError, PasswordExpired, ServerMaintenance, RateLimited
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -14,7 +14,13 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 import homeassistant.helpers.config_validation as cv
 
-from .const import DEFAULT_NAME, DOMAIN, POLLING_INTERVAL, SKIP_PASSWORD_CHANGE
+from .const import (
+    DEFAULT_NAME,
+    DOMAIN,
+    MAINTENANCE_COOLDOWN,
+    POLLING_INTERVAL,
+    SKIP_PASSWORD_CHANGE
+)
 from .util import async_validate_api, NoPurifiersError
 
 
@@ -30,7 +36,7 @@ DATA_SCHEMA = vol.Schema(
 class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Coway integration."""
 
-    VERSION = 4
+    VERSION = 5
 
     entry: config_entries.ConfigEntry | None
 
@@ -72,11 +78,14 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "password_expired"
             except ServerMaintenance:
                 errors["base"] = "server_maintenance"
+            except RateLimited:
+                errors["base"] = "rate_limited"
             else:
                 assert self.entry is not None
 
                 self.hass.config_entries.async_update_entry(
                     self.entry,
+                    title=username,
                     data={
                         **self.entry.data,
                         CONF_USERNAME: username,
@@ -120,15 +129,18 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "password_expired"
             except ServerMaintenance:
                 errors["base"] = "server_maintenance"
+            except RateLimited:
+                errors["base"] = "rate_limited"
             else:
                 await self.async_set_unique_id(username)
                 self._abort_if_unique_id_configured()
 
                 return self.async_create_entry(
-                    title=DEFAULT_NAME,
+                    title=username,
                     data={
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
+                        MAINTENANCE_COOLDOWN: None,
                     },
                     options={
                         SKIP_PASSWORD_CHANGE: skip_password_change,
