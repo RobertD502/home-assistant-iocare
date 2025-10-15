@@ -5,14 +5,28 @@ import async_timeout
 
 from aiohttp import ClientSession
 from cowayaio import CowayClient
-from cowayaio.exceptions import AuthError, CowayError, PasswordExpired, ServerMaintenance, RateLimited
+from cowayaio.exceptions import (
+    AuthError,
+    CowayError,
+    NoPlaces,
+    NoPurifiers,
+    PasswordExpired,
+    ServerMaintenance,
+    RateLimited
+)
 
 from homeassistant.core import HomeAssistant
 
 from .const import LOGGER, COWAY_ERRORS, TIMEOUT
 
 
-async def async_validate_api(hass: HomeAssistant, username: str, password: str, skip_password_change: bool, session: ClientSession) -> None:
+async def async_validate_api(
+    hass: HomeAssistant,
+    username: str,
+    password: str,
+    skip_password_change: bool,
+    session: ClientSession
+) -> None:
     """Get data from API."""
 
     client = CowayClient(
@@ -21,14 +35,25 @@ async def async_validate_api(hass: HomeAssistant, username: str, password: str, 
         session=session,
         timeout=TIMEOUT,
     )
-    client.skip_password_change = skip_password_change
+    # Always set to True to prevent users from constantly
+    # hitting API
+    client.skip_password_change = True
 
     try:
         async with async_timeout.timeout(TIMEOUT):
-            await client.login()
-            coway_query = await client.async_get_purifiers()
+            await client.async_get_purifiers_data()
     except ServerMaintenance as err:
         raise ServerMaintenance from err
+    except NoPlaces as err:
+        LOGGER.error(f'No places found to be associated with IoCare+ account: {err}')
+        raise NoPlaces from err
+    except NoPurifiers as err:
+        LOGGER.error(
+            f'No purifiers found to be associated with IoCare+ account. '
+            f'This integration requires/only works with purifiers that '
+            f'are registered in the IoCare+ app (NOT the old IoCare app).'
+        )
+        raise NoPurifiers from err
     except RateLimited as err:
         raise RateLimited from err
     except AuthError as err:
@@ -44,14 +69,7 @@ async def async_validate_api(hass: HomeAssistant, username: str, password: str, 
     except COWAY_ERRORS as err:
         LOGGER.error(f'Failed to get information from Coway servers: {err}')
         raise ConnectionError from err
-    purifiers: list = coway_query
-    if not purifiers:
-        LOGGER.error("Could not retrieve any purifiers from Coway servers")
-        raise NoPurifiersError
 
-
-class NoPurifiersError(Exception):
-    """No Purifiers from Coway API."""
 
 class KnownServerMaintenance(Exception):
     """Known server maintenance encountered."""
