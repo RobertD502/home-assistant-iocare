@@ -5,26 +5,25 @@
         "title": "Fill in your Coway IoCare account credentials",
         "data": {
           "username": "Coway IoCare account email or phone number",
-          "password": "Coway IoCare account password",
-          "skip_password_change": "Skip password change"
+          "password": "Coway IoCare account password"
         }
       },
       "reauth_confirm": {
         "title": "Reauthenticate with your Coway IoCare account credentials",
         "data": {
           "username": "Coway IoCare account email or phone number",
-          "password": "Coway IoCare account password",
-          "skip_password_change": "Skip password change"
+          "password": "Coway IoCare account password"
         }
       }
     },
     "error": {
       "cannot_connect": "Failed to connect",
       "invalid_auth": "Coway API authentication error: unable to retrieve auth 'code'. Likely due to invalid username/password.",
-      "no_purifiers": "No purifiers discovered",
       "password_expired": "Coway servers are requesting a password change as the password on this account hasn't been changed for 60 days or more. Use the IoCare app to change your password. Otherwise, select the skip password change option.",
       "server_maintenance": "Coway servers are currently undergoing maintenance. Please try again later.",
-      "rate_limited": "Your account has likely been rate-limited (blocked). Please wait 24 hours before attempting to set up the integration again. If, after 24 hours, you're unable to log in even with the mobile IoCare+ app, please contact Coway support."
+      "rate_limited": "Your account has likely been rate-limited (blocked). Please wait 24 hours before attempting to set up the integration again. If, after 24 hours, you're unable to log in even with the mobile IoCare+ app, please contact Coway support.",
+      "no_purifiers": "No purifiers found to be associated with IoCare+ account. This integration requires/only works with purifiers that are registered in the IoCare+ app (NOT the old IoCare app).",
+      "no_places": "No places found to be associated with IoCare+ account."      
     },
     "abort": {
       "already_configured": "Coway IoCare account is already configured",
@@ -36,7 +35,6 @@
       "coway_account_settings": {
         "description": "Options for Coway IoCare Account",  
         "data": {
-          "skip_password_change": "Skip password change",
           "polling_interval": "Polling interval (seconds)"
         }
       }

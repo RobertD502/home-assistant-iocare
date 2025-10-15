@@ -8,6 +8,8 @@ from cowayaio import CowayClient
 from cowayaio.exceptions import (
     AuthError,
     CowayError,
+    NoPlaces,
+    NoPurifiers,
     PasswordExpired,
     ServerMaintenance,
     RateLimited
@@ -50,7 +52,7 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
         )
         self.entry = entry
         self.cooldown = entry.data[MAINTENANCE_COOLDOWN]
-        self.client.skip_password_change = entry.options[SKIP_PASSWORD_CHANGE]
+        self.client.skip_password_change = True
         super().__init__(
             hass,
             LOGGER,
@@ -127,6 +129,16 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
                 f"likely rate-limited (blocked). Please wait 24 hours before attempting to use the integration again. "
                 f"If, after 24 hours, you're unable to log in even with the mobile IoCare+ app, please contact "
                 f"Coway for support."
+            )
+        except NoPlaces:
+            raise ConfigEntryError(
+                f'Failed to set up Coway integration for {self.client.username}: No Coway places '
+                f'have been found to be associated with your IoCare+ account.'
+            )
+        except NoPurifiers:
+            raise ConfigEntryError(
+                f'No purifiers found to be associated with IoCare+ account. This integration requires/only '
+                f'works with purifiers that are registered in the IoCare+ app (NOT the old IoCare app).'
             )
         except KnownServerMaintenance as error:
             raise UpdateFailed(error) from error

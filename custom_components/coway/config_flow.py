@@ -4,7 +4,14 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from cowayaio.exceptions import AuthError, PasswordExpired, ServerMaintenance, RateLimited
+from cowayaio.exceptions import (
+    AuthError,
+    NoPlaces,
+    NoPurifiers,
+    PasswordExpired,
+    ServerMaintenance,
+    RateLimited
+)
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -21,14 +28,14 @@ from .const import (
     POLLING_INTERVAL,
     SKIP_PASSWORD_CHANGE
 )
-from .util import async_validate_api, NoPurifiersError
+from .util import async_validate_api
 
 
 DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_USERNAME): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
-        vol.Optional(SKIP_PASSWORD_CHANGE): bool,
+#        vol.Optional(SKIP_PASSWORD_CHANGE): bool,
     }
 )
 
@@ -64,7 +71,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input:
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
-            skip_password_change = user_input[SKIP_PASSWORD_CHANGE] if SKIP_PASSWORD_CHANGE in user_input else False
+            skip_password_change = True
             try:
                 session = async_create_clientsession(self.hass)
                 await async_validate_api(self.hass, username, password, skip_password_change, session)
@@ -72,7 +79,9 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "invalid_auth"
             except ConnectionError:
                 errors["base"] = "cannot_connect"
-            except NoPurifiersError:
+            except NoPlaces:
+                errors["base"] = "no_places"
+            except NoPurifiers:
                 errors["base"] = "no_purifiers"
             except PasswordExpired:
                 errors["base"] = "password_expired"
@@ -115,7 +124,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input:
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
-            skip_password_change = user_input[SKIP_PASSWORD_CHANGE] if SKIP_PASSWORD_CHANGE in user_input else False
+            skip_password_change = True
             try:
                 session = async_create_clientsession(self.hass)
                 await async_validate_api(self.hass, username, password, skip_password_change, session)
@@ -123,7 +132,9 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "invalid_auth"
             except ConnectionError:
                 errors["base"] = "cannot_connect"
-            except NoPurifiersError:
+            except NoPlaces:
+                errors["base"] = "no_places"
+            except NoPurifiers:
                 errors["base"] = "no_purifiers"
             except PasswordExpired:
                 errors["base"] = "password_expired"
@@ -168,12 +179,12 @@ class CowayOptionsFlowHandler(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         options = {
-            vol.Required(
-                SKIP_PASSWORD_CHANGE,
-                default=self.config_entry.options.get(
-                    SKIP_PASSWORD_CHANGE, False
-                ),
-            ): bool,
+#            vol.Required(
+#                SKIP_PASSWORD_CHANGE,
+#                default=self.config_entry.options.get(
+#                    SKIP_PASSWORD_CHANGE, False
+#                ),
+#            ): bool,
             vol.Required(
                 POLLING_INTERVAL,
                 default=self.config_entry.options.get(
