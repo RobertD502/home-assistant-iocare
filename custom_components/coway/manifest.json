@@ -6,7 +6,7 @@
   ],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/RobertD502/home-assistant-iocare/blob/main/README.md",
+  "documentation": "https://github.com/RobertD502/home-assistant-iocare/blob/master/README.md",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/RobertD502/home-assistant-iocare/issues",
