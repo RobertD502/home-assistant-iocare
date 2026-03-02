@@ -122,7 +122,7 @@ class Purifier(CoordinatorEntity, FanEntity):
                 return PRESET_MODES
 
     @property
-    def preset_mode(self) -> str:
+    def preset_mode(self) -> str | None:
         """Return the current preset mode."""
 
         if self.purifier_data.device_attr['model_code'] == "AP-1512HHS":
@@ -148,6 +148,7 @@ class Purifier(CoordinatorEntity, FanEntity):
                 return PRESET_MODE_AUTO
             if self.purifier_data.night_mode:
                 return PRESET_MODE_NIGHT
+        return None
 
     @property
     def percentage(self) -> int:
@@ -162,10 +163,10 @@ class Purifier(CoordinatorEntity, FanEntity):
         ## when in either of these two modes.
         if self.purifier_data.device_attr['model'] == "Airmega 250S":
             if self.purifier_data.fan_speed in [5, 9]:
-                return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
+                return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF, 0)
         if self.preset_mode == PRESET_MODE_AUTO_ECO:
-            return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
-        return IOCARE_FAN_SPEED_TO_HASS.get(self.purifier_data.fan_speed)
+            return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF, 0)
+        return IOCARE_FAN_SPEED_TO_HASS.get(self.purifier_data.fan_speed, 0)
 
     @property
     def speed_count(self) -> int:
