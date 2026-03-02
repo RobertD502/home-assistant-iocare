@@ -307,7 +307,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.eco_mode = False
             self.purifier_data.night_mode = False
             self.purifier_data.fan_speed = IOCARE_FAN_LOW
-        if preset_mode in [PRESET_MODE_NIGHT, PRESET_MODE_ECO]:
+        elif preset_mode in [PRESET_MODE_NIGHT, PRESET_MODE_ECO]:
             if self.purifier_data.device_attr['model_code'] == "AP-1512HHS":
                 try:
                     await self.coordinator.client.async_set_eco_mode(
@@ -327,7 +327,7 @@ class Purifier(CoordinatorEntity, FanEntity):
                 self.purifier_data.night_mode = True
             self.purifier_data.auto_mode = False
             self.purifier_data.fan_speed = IOCARE_FAN_OFF
-        if preset_mode == PRESET_MODE_RAPID:
+        elif preset_mode == PRESET_MODE_RAPID:
             try:
                 await self.coordinator.client.async_set_rapid_mode(
                     self.purifier_data.device_attr
