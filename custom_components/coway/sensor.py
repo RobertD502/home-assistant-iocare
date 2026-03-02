@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import time
 from typing import Any
 
 from cowayaio.purifier_model import CowayPurifier
@@ -503,13 +502,12 @@ class TimerRemaining(CoordinatorEntity, SensorEntity):
         return True
 
     @property
-    def native_value(self):
+    def native_value(self) -> str:
         """Return time remaining on timer."""
 
-        total_time = round((float(self.purifier_data.timer_remaining) / 60), 2)
-        hours, minutes = int(total_time), round(((total_time - int(total_time)) * 60))
-        timer_remaining = time(hour = hours, minute = minutes)
-        return timer_remaining.isoformat(timespec = "minutes")
+        total_minutes = round(float(self.purifier_data.timer_remaining))
+        hours, minutes = divmod(total_minutes, 60)
+        return f"{hours:02d}:{minutes:02d}"
 
     @property
     def icon(self):
