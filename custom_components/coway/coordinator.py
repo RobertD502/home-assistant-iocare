@@ -162,7 +162,7 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
             raise ConfigEntryAuthFailed(
                 f"Coway servers are requesting a password change as the password on this account hasn't been changed for 60 days or more. "
                 f"Either use the IoCare app to change your password or reauthenticate the integration with the skip password change option."
-            )
+            ) from error
         except CowayError as error:
             raise UpdateFailed(error) from error
 
