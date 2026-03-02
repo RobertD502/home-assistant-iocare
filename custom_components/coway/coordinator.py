@@ -90,7 +90,7 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
                                 raise ServerMaintenance(
                                     f'Coway servers are currently undergoing planned maintenance. '
                                     f'Polling suspended. Will try polling again/checking if maintenance '
-                                    f'has ended at {datetime.utcfromtimestamp(self.cooldown).strftime("%m/%d/%Y, %H:%M")}'
+                                    f'has ended at {datetime.fromtimestamp(self.cooldown, tz=timezone.utc).strftime("%m/%d/%Y, %H:%M")}'
                                 )
                             else:
                                 self.hass.config_entries.async_update_entry(self.entry, data=null_maint_data)
@@ -110,7 +110,7 @@ class CowayDataUpdateCoordinator(DataUpdateCoordinator):
                         raise ServerMaintenance(
                             f'Coway servers are currently undergoing planned maintenance. '
                             f'Polling suspended. Will try polling again/checking if maintenance '
-                            f'has ended at {datetime.utcfromtimestamp(self.cooldown).strftime("%m/%d/%Y, %H:%M")}'
+                            f'has ended at {datetime.fromtimestamp(self.cooldown, tz=timezone.utc).strftime("%m/%d/%Y, %H:%M")}'
                         )
                     else:
                         # Reset cooldown as an hour has passed.
