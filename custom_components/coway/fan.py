@@ -174,7 +174,7 @@ class Purifier(CoordinatorEntity, FanEntity):
         return len(ORDERED_NAMED_FAN_SPEEDS)
 
     @property
-    def supported_features(self) -> int:
+    def supported_features(self) -> FanEntityFeature:
         """Return supported features."""
 
         return (
