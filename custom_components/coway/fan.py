@@ -192,8 +192,9 @@ class Purifier(CoordinatorEntity, FanEntity):
             return True
         else:
             LOGGER.error(
-                f'{self.purifier_data.device_attr["name"]} is reported as offline. Please disable WiFi on the device '
-                f'(even if WiFi indicator light is normal) and re-enable it for the purifier to check back in with Coway\'s servers.'
+                '%s is reported as offline. Please disable WiFi on the device '
+                '(even if WiFi indicator light is normal) and re-enable it for the purifier to check back in with Coway\'s servers.',
+                self.purifier_data.device_attr['name'],
             )
             return False
 

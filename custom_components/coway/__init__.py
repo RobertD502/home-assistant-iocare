@@ -36,7 +36,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Coway from a config entry."""
 
     LOGGER.debug(
-        f'Starting Coway integration {INTEGRATION_VERSION}/CowayAIO {coway_aio_version}'
+        'Starting Coway integration %s/CowayAIO %s',
+        INTEGRATION_VERSION,
+        coway_aio_version,
     )
 
     null_maint_data = {
@@ -82,8 +84,9 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         password = entry.data[CONF_PASSWORD]
 
         LOGGER.debug(
-            f'Migrating Coway config entry unique id to {username}, disabling skipping password change, '
-            f'setting polling interval of 120, and adding maintenance_cooldown key'
+            'Migrating Coway config entry unique id to %s, disabling skipping password change, '
+            'setting polling interval of 120, and adding maintenance_cooldown key',
+            username,
         )
 
         hass.config_entries.async_update_entry(
