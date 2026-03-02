@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 import json
-import os
+from pathlib import Path
 
 from cowayaio.__version__ import __version__ as coway_aio_version
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 from homeassistant.core import HomeAssistant
+from homeassistant.loader import async_get_integration
 
 from .const import (
     COWAY_COORDINATOR,
@@ -25,18 +26,14 @@ from .const import (
 from .coordinator import CowayDataUpdateCoordinator
 
 
-curr_dir = os.path.dirname(__file__)
-manifest_path = os.path.join(curr_dir, 'manifest.json')
-with open(manifest_path, 'r') as file:
-    json_file = json.load(file)
-INTEGRATION_VERSION = json_file.get("version")
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Coway from a config entry."""
 
+    integration = await async_get_integration(hass, DOMAIN)
+    integration_version = integration.version
+
     LOGGER.debug(
-        f'Starting Coway integration {INTEGRATION_VERSION}/CowayAIO {coway_aio_version}'
+        f'Starting Coway integration {integration_version}/CowayAIO {coway_aio_version}'
     )
 
     null_maint_data = {
