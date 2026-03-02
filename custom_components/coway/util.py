@@ -45,29 +45,29 @@ async def async_validate_api(
     except ServerMaintenance as err:
         raise ServerMaintenance from err
     except NoPlaces as err:
-        LOGGER.error(f'No places found to be associated with IoCare+ account: {err}')
+        LOGGER.error('No places found to be associated with IoCare+ account: %s', err)
         raise NoPlaces from err
     except NoPurifiers as err:
         LOGGER.error(
-            f'No purifiers found to be associated with IoCare+ account. '
-            f'This integration requires/only works with purifiers that '
-            f'are registered in the IoCare+ app (NOT the old IoCare app).'
+            'No purifiers found to be associated with IoCare+ account. '
+            'This integration requires/only works with purifiers that '
+            'are registered in the IoCare+ app (NOT the old IoCare app).'
         )
         raise NoPurifiers from err
     except RateLimited as err:
         raise RateLimited from err
     except AuthError as err:
-        LOGGER.error(f'Could not authenticate on Coway servers: {err}')
+        LOGGER.error('Could not authenticate on Coway servers: %s', err)
         raise AuthError from err
     except PasswordExpired as err:
         LOGGER.error(
-            f"Coway servers are requesting a password change as the password on "
-            f"this account hasn't been changed for 60 days or more. Use the IoCare "
-            f"app to change your password or use the skip password change option."
+            "Coway servers are requesting a password change as the password on "
+            "this account hasn't been changed for 60 days or more. Use the IoCare "
+            "app to change your password or use the skip password change option."
         )
         raise PasswordExpired from err
     except COWAY_ERRORS as err:
-        LOGGER.error(f'Failed to get information from Coway servers: {err}')
+        LOGGER.error('Failed to get information from Coway servers: %s', err)
         raise ConnectionError from err
 
 
