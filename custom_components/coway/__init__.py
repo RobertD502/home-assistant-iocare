@@ -101,7 +101,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             },
             unique_id=username,
         )
-    if entry.version == 2:
+    elif entry.version == 2:
         LOGGER.debug(
             'Migrating Coway config: disabling skipping password change, setting polling '
             'interval of 120, and adding maintenance_cooldown key'
@@ -121,7 +121,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 POLLING_INTERVAL: 120
             },
         )
-    if entry.version == 3:
+    elif entry.version == 3:
         LOGGER.debug(
             'Migrating Coway config: setting polling interval of '
             '120, and adding maintenance_cooldown key'
@@ -142,7 +142,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             },
         )
 
-    if entry.version == 4:
+    elif entry.version == 4:
         LOGGER.debug(
             'Migrating Coway config: adding maintenance_cooldown key'
         )
