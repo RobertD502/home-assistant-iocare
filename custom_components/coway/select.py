@@ -388,7 +388,7 @@ class Light(CoordinatorEntity, SelectEntity):
     def unique_id(self) -> str:
         """Sets unique ID for this entity."""
 
-        return self.purifier_data.device_attr['device_id'] + '_light'
+        return self.purifier_data.device_attr['device_id'] + '_light_mode'
 
     @property
     def name(self) -> str:
