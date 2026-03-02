@@ -15,9 +15,9 @@ from cowayaio.exceptions import (
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 import homeassistant.helpers.config_validation as cv
 
@@ -55,7 +55,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Get the options flow for this handler."""
         return CowayOptionsFlowHandler()
 
-    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> FlowResult:
+    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> ConfigFlowResult:
         """Handle re-authentication with Coway."""
 
         self.entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
@@ -63,7 +63,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_reauth_confirm(
             self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Confirm re-authentication with Coway."""
 
         errors: dict[str, str] = {}
@@ -116,7 +116,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
             self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
 
         errors: dict[str, str] = {}
