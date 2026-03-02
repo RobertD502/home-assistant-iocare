@@ -1,7 +1,7 @@
 """Utilities for Coway Integration"""
 from __future__ import annotations
 
-import async_timeout
+import asyncio
 
 from aiohttp import ClientSession
 from cowayaio import CowayClient
@@ -40,7 +40,7 @@ async def async_validate_api(
     client.skip_password_change = True
 
     try:
-        async with async_timeout.timeout(TIMEOUT):
+        async with asyncio.timeout(TIMEOUT):
             await client.async_get_purifiers_data()
     except ServerMaintenance as err:
         raise ServerMaintenance from err
