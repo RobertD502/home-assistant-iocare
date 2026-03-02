@@ -130,10 +130,7 @@ class Timer(CoordinatorEntity, SelectEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
@@ -230,10 +227,7 @@ class PreFilterFrequency(CoordinatorEntity, SelectEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
@@ -329,10 +323,7 @@ class SmartModeSensitivity(CoordinatorEntity, SelectEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
@@ -427,10 +418,7 @@ class Light(CoordinatorEntity, SelectEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""

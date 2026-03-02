@@ -94,10 +94,7 @@ class PurifierLight(CoordinatorEntity, SwitchEntity):
     def is_on(self) -> bool:
         """Return true if light AND purifier are on."""
 
-        if self.purifier_data.is_on and self.purifier_data.light_on:
-            return True
-        else:
-            return False
+        return self.purifier_data.is_on and self.purifier_data.light_on
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
@@ -147,10 +144,7 @@ class PurifierLight(CoordinatorEntity, SwitchEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 
 class ButtonLock(CoordinatorEntity, SwitchEntity):
@@ -208,10 +202,7 @@ class ButtonLock(CoordinatorEntity, SwitchEntity):
     def is_on(self) -> bool:
         """Return true if lock AND purifier are on."""
 
-        if self.purifier_data.is_on and self.purifier_data.button_lock == 1:
-            return True
-        else:
-            return False
+        return self.purifier_data.is_on and self.purifier_data.button_lock == 1
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
@@ -261,7 +252,4 @@ class ButtonLock(CoordinatorEntity, SwitchEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status

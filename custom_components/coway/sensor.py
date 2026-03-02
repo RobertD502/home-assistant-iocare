@@ -129,10 +129,7 @@ class AirQualityIndex(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 
 class PreFilter(CoordinatorEntity, SensorEntity):
@@ -213,10 +210,7 @@ class PreFilter(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 
 class MAX2Filter(CoordinatorEntity, SensorEntity):
@@ -293,10 +287,7 @@ class MAX2Filter(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 
 class ParticulateMatter10(CoordinatorEntity, SensorEntity):
@@ -374,10 +365,7 @@ class ParticulateMatter10(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 class ParticulateMatter25(CoordinatorEntity, SensorEntity):
     """Representation of PM2.5 measurement."""
@@ -454,10 +442,7 @@ class ParticulateMatter25(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 
 class TimerRemaining(CoordinatorEntity, SensorEntity):
@@ -521,10 +506,7 @@ class TimerRemaining(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 
 class IndoorAQ(CoordinatorEntity, SensorEntity):
@@ -590,10 +572,7 @@ class IndoorAQ(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
 
 
 class Lux(CoordinatorEntity, SensorEntity):
@@ -677,7 +656,4 @@ class Lux(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return true if purifier is connected to Coway servers."""
 
-        if self.purifier_data.network_status:
-            return True
-        else:
-            return False
+        return self.purifier_data.network_status
