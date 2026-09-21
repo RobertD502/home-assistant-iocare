@@ -14,7 +14,7 @@
     "cowayaio"
   ],
   "requirements": [
-    "cowayaio==0.2.4"
+    "cowayaio==0.2.5"
   ],
-  "version": "0.6.1"
+  "version": "0.6.2"
 }
