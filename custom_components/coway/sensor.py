@@ -14,9 +14,9 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import(
-    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     LIGHT_LUX,
     PERCENTAGE,
+    UnitOfDensity,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -350,7 +350,7 @@ class ParticulateMatter10(CoordinatorEntity, SensorEntity):
     def native_unit_of_measurement(self) -> str:
         """Return unit of measurement."""
 
-        return CONCENTRATION_MICROGRAMS_PER_CUBIC_METER
+        return UnitOfDensity.MICROGRAMS_PER_CUBIC_METER
 
     @property
     def device_class(self) -> SensorDeviceClass:
@@ -430,7 +430,7 @@ class ParticulateMatter25(CoordinatorEntity, SensorEntity):
     def native_unit_of_measurement(self) -> str:
         """Return unit of measurement."""
 
-        return CONCENTRATION_MICROGRAMS_PER_CUBIC_METER
+        return UnitOfDensity.MICROGRAMS_PER_CUBIC_METER
 
     @property
     def device_class(self) -> SensorDeviceClass:
